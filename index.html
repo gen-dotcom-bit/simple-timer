@@ -29,6 +29,16 @@
     gap: 10px;
     margin-bottom: 20px;
   }
+  .inputs div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .inputs label {
+    font-size: 0.8rem;
+    color: #aab;
+  }
   .inputs input {
     width: 70px;
     padding: 8px;
@@ -56,8 +66,14 @@
 <body>
   <h1>シンプルタイマー</h1>
   <div class="inputs">
-    <input type="number" id="minutes" min="0" value="0" placeholder="分">
-    <input type="number" id="seconds" min="0" max="59" value="10" placeholder="秒">
+    <div>
+      <label for="minutes">分</label>
+      <input type="number" id="minutes" min="0" value="0" placeholder="分">
+    </div>
+    <div>
+      <label for="seconds">秒</label>
+      <input type="number" id="seconds" min="0" max="59" value="10" placeholder="秒">
+    </div>
   </div>
   <div class="display" id="display">00:00</div>
   <div class="buttons">
