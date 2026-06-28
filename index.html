@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>シンプルタイマー</title>
+<style>
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background: #1e1e2f;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  h1 { margin-bottom: 10px; font-size: 1.4rem; color: #aab; }
+  .display {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 20px 0;
+    letter-spacing: 2px;
+    min-width: 320px;
+    text-align: center;
+  }
+  .inputs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .inputs input {
+    width: 70px;
+    padding: 8px;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 6px;
+    border: none;
+  }
+  .buttons { display: flex; gap: 10px; }
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #4a4af0;
+    color: white;
+    transition: background 0.2s;
+  }
+  button:hover { background: #6a6aff; }
+  button:disabled { background: #555; cursor: not-allowed; }
+  .finished { color: #ff6b6b; }
+</style>
+</head>
+<body>
+  <h1>シンプルタイマー</h1>
+  <div class="inputs">
+    <input type="number" id="minutes" min="0" value="0" placeholder="分">
+    <input type="number" id="seconds" min="0" max="59" value="10" placeholder="秒">
+  </div>
+  <div class="display" id="display">00:00</div>
+  <div class="buttons">
+    <button id="startBtn">開始</button>
+    <button id="pauseBtn" disabled>一時停止</button>
+    <button id="resetBtn">リセット</button>
+  </div>
+
+<script>
+let totalSeconds = 0;
+let remaining = 0;
+let intervalId = null;
+
+const display = document.getElementById('display');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const resetBtn = document.getElementById('resetBtn');
+const minutesInput = document.getElementById('minutes');
+const secondsInput = document.getElementById('seconds');
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60).toString().padStart(2, '0');
+  const s = (sec % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function updateDisplay() {
+  display.textContent = formatTime(remaining);
+  display.classList.remove('finished');
+}
+
+function tick() {
+  remaining--;
+  if (remaining <= 0) {
+    remaining = 0;
+    updateDisplay();
+    clearInterval(intervalId);
+    intervalId = null;
+    display.textContent = "時間です！";
+    display.classList.add('finished');
+    startBtn.disabled = false;
+    pauseBtn.disabled = true;
+    minutesInput.disabled = false;
+    secondsInput.disabled = false;
+    return;
+  }
+  updateDisplay();
+}
+
+startBtn.addEventListener('click', () => {
+  if (intervalId) return;
+  if (remaining <= 0) {
+    const m = parseInt(minutesInput.value) || 0;
+    const s = parseInt(secondsInput.value) || 0;
+    totalSeconds = m * 60 + s;
+    if (totalSeconds <= 0) return;
+    remaining = totalSeconds;
+  }
+  updateDisplay();
+  intervalId = setInterval(tick, 1000);
+  startBtn.disabled = true;
+  pauseBtn.disabled = false;
+  minutesInput.disabled = true;
+  secondsInput.disabled = true;
+});
+
+pauseBtn.addEventListener('click', () => {
+  clearInterval(intervalId);
+  intervalId = null;
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
+});
+
+resetBtn.addEventListener('click', () => {
+  clearInterval(intervalId);
+  intervalId = null;
+  remaining = 0;
+  totalSeconds = 0;
+  display.textContent = "00:00";
+  display.classList.remove('finished');
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
+  minutesInput.disabled = false;
+  secondsInput.disabled = false;
+});
+</script>
+</body>
+</html>
